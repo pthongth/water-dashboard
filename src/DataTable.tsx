@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
-import Sparklines from 'react-sparklines';
-import SparklinesLine from 'react-sparklines';
+import { LineChart, Line, ResponsiveContainer } from 'recharts';
 
 interface DamData {
     dam_name_th: string;
@@ -31,25 +30,22 @@ const DataTable: React.FC<DataTableProps> = ({ data, getHistoricalData }) => {
                 <TableHead>
                     <TableRow>
                         <TableCell>ชื่อ</TableCell>
-                        <TableCell align="right">วัน</TableCell>
-                        {/* <TableCell align="right">Normal Storage (m³)</TableCell> */}
-                        <TableCell align="right">น้ำในอ่าง (m³)</TableCell>
-                        <TableCell align="right">น้ำในอ่าง (%)</TableCell>
-                        <TableCell align="right">น้ำไหลลงอ่าง (m³/s)</TableCell>
-                        <TableCell align="right">น้ำระบาย (m³/s)</TableCell>
-                        <TableCell align="right">จังหวัด</TableCell>
-                        {/* <TableCell align="right">Area Code</TableCell>
-                        <TableCell align="right">Area Name</TableCell> */}
-                        <TableCell align="right">แนวโนมน้ำในอ่าง</TableCell>
+                        <TableCell align="center">วัน</TableCell>
+                        <TableCell align="center">น้ำในอ่าง (m³)</TableCell>
+                        <TableCell align="center">น้ำในอ่าง (%)</TableCell>
+                        <TableCell align="center">น้ำไหลลงอ่าง (m³/s)</TableCell>
+                        <TableCell align="center">น้ำระบาย (m³/s)</TableCell>
+                        <TableCell align="center">จังหวัด</TableCell>
+                        <TableCell align="center">แนวโนมน้ำในอ่าง</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {data.map((item, index) => {
                         const isNewArea = item.area_code !== lastAreaCode;
-                        lastAreaCode = item.area_code; // Update lastAreaCode to current
+                        lastAreaCode = item.area_code;
                         
                         return (
-                            <>
+                            <React.Fragment key={index}>
                                 {isNewArea && (
                                     <TableRow>
                                         <TableCell colSpan={11} style={{ padding: '16px', backgroundColor: '#f0f0f0' }}>
@@ -60,27 +56,26 @@ const DataTable: React.FC<DataTableProps> = ({ data, getHistoricalData }) => {
                                     </TableRow>
                                 )}
                                 <TableRow
-                                    key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">{item.dam_name_th}</TableCell>
                                     <TableCell align="right">{item.dam_date}</TableCell>
-                                    {/* <TableCell align="right">{item.normal_storage}</TableCell> */}
                                     <TableCell align="right">{item.dam_storage}</TableCell>
                                     <TableCell align="right">{`${item.dam_storage_percent.toFixed(2)}%`}</TableCell>
                                     <TableCell align="right">{item.dam_inflow}</TableCell>
                                     <TableCell align="right">{item.dam_released}</TableCell>
                                     <TableCell align="right">{item.province_name_th}</TableCell>
-                                    {/* <TableCell align="right">{item.area_code}</TableCell> */}
-                                    {/* <TableCell align="right">{item.area_name_th}</TableCell> */}
-                                    <TableCell align="right" style={{ padding: 0, width: '30%' }}>
-                                        <Sparklines data={getHistoricalData(item.dam_name_th)} limit={14} width={60} height={15} area>
-                                          <SparklinesLine color="blue" style={{ strokeWidth: "0.2"}} />
-                                         
-                                        </Sparklines>
+                                    <TableCell align="right" style={{ padding: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <div style={{ width: '250px', height: '120px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={getHistoricalData(item.dam_name_th).slice(-14).map((value, i) => ({ value, index: i }))}>
+                                                <Line type="monotone" dataKey="value" stroke="blue" dot={true} strokeWidth={1.5} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                        </div>
                                     </TableCell>
                                 </TableRow>
-                            </>
+                            </React.Fragment>
                         );
                     })}
                 </TableBody>
