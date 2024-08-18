@@ -3,12 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://pthongth.github.io/water-dashboard",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "homepage": "https://pthongth.github.io/water-dashboard",
+    "preview": "vite preview",    
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
